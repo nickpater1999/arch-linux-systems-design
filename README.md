@@ -18,7 +18,7 @@ It is a structured system architecture for users who want to understand and cont
 - Maintain long-term relevance independent of hardware trends
 
 ---
-This architecture is hardware-agnostic to the length that Arch dictates (x86-64 CPU architecture, etc.)
+
 ## Hardware Context
 
 The design documented here was developed and tested on legacy BIOS-based laptop hardware (e.g., ThinkPad T400-era systems).
