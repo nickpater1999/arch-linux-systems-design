@@ -146,12 +146,17 @@ arch-chroot /mnt
 
 ## 7. Initramfs Configuration (Encryption Hook)
 
-Edit `/etc/mkinitcpio.conf` and ensure the `encrypt` hook appears before `filesystems`.
+Edit `/etc/mkinitcpio.conf` and ensure the `sd-encrypt` hook appears before `filesystems`.
 
 Example:
 ```
-HOOKS=(base udev autodetect keyboard keymap modconf block encrypt filesystems fsck)
+HOOKS=(base systemd autodetect microcode modconf kms keyboard keymap sd-vconsole block sd-encrypt filesystems fsck)
 ```
+
+Ensure that `sd-encrypt`:
+- is used if using `systemd`
+- appears after `keyboard`, `keymap`, and `block`
+- appears before `filesystems`
 
 Regenerate initramfs:
 ```bash
