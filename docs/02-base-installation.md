@@ -2,6 +2,8 @@
 
 This document describes the base system installation for the architecture defined in this repository.
 
+In addition to base installation, subvolumes for root and home snapshots will be created and mounted in preparation for the [System Recovery Model](03-system-recovery-model.md).
+
 The installation targets:
 - Legacy BIOS systems
 - No secure boot available
@@ -90,7 +92,8 @@ mount /dev/mapper/cryptroot /mnt
 
 btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
-btrfs su cr /mnt/@snapshots
+btrfs su cr /mnt/@root_snapshots
+btrfs su cr /mnt/@home_snapshots
 btrfs su cr /mnt/@var_cache
 btrfs su cr /mnt/@var_log
 btrfs su cr /mnt/@var_spool
@@ -103,7 +106,8 @@ umount /mnt
 
 mount -o noatime,compress=zstd,subvol=@ /dev/mapper/cryptroot /mnt
 mount --mkdir -o noatime,compress=zstd,subvol=@home /dev/mapper/cryptroot /mnt/home
-mount --mkdir -o noatime,compress=zstd,subvol=@snapshots /dev/mapper/cryptroot /mnt/.snapshots
+mount --mkdir -o noatime,compress=zstd,subvol=@root_snapshots /dev/mapper/cryptroot /mnt/.snapshots
+mount --mkdir -o noatime,compress=zstd,subvol=@home_snapshots /dev/mapper/cryptroot /mnt/home/.snapshots
 mount --mkdir -o noatime,compress=no,subvol=@var_cache /dev/mapper/cryptroot /mnt/var/cache
 mount --mkdir -o noatime,compress=no,subvol=@var_log /dev/mapper/cryptroot /mnt/var/log
 mount --mkdir -o noatime,compress=no,subvol=@var_spool /dev/mapper/cryptroot /mnt/var/spool
