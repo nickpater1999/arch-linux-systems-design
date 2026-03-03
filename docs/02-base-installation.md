@@ -172,7 +172,7 @@ blkid /dev/sdX3
 
 Optionally append the correct UUID, commented, to the `/etc/default/grub` file in one line:
 ```bash
-blkid -s UUID -o value /dev/sda3 | sed 's/^/# /' >> /mnt/etc/default/grub
+blkid -s UUID -o value /dev/sda3 | sed 's/^/# /' >> /etc/default/grub
 ```
 
 Edit `/etc/default/grub` and add the cryptdevice paramater (use copy and paste if you appended):
