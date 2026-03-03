@@ -58,9 +58,9 @@ gdisk /dev/sdX
 Input `?` to list available actions.
 
 Create the partitions, using type codes to correctly identify the BIOS boot partition (for hygeine otherwise):
-- 1st partition: size 2M, type code `ef02`
-- 2nd partition: size 512M, type code `8300`
-- 3rd partition: remainder of disk, type code `8304`
+- 1st partition: size 2M, type code `ef02` (BIOS boot partition)
+- 2nd partition: size 512M, type code `8301` (Linux reserved)
+- 3rd partition: remainder of disk, type code `8304` (Linux x86-64 root)
 
 
 ## 4. Encrypt the Root Partition
