@@ -11,6 +11,7 @@ The installation targets:
 - No LVM
 - No keyfile-based unlock
 - Passphrase-based disk unlock at boot
+- BusyBox rather than systemd used for initramfs
 - GRUB as bootloader
 
 This section assumes familiarity with the standard Arch installation flow.
@@ -56,6 +57,8 @@ gdisk /dev/sdX
 ```
 
 Input `?` to list available actions.
+
+Create a fresh GPT.
 
 Create the partitions, using type codes to correctly identify the BIOS boot partition (for hygeine otherwise):
 - 1st partition: size 2M, type code `ef02` (BIOS boot partition)
@@ -118,7 +121,7 @@ mount --mkdir /dev/sdX2 /mnt/boot
 
 Install essential packages:
 ```bash
-pacstrap -K /mnt base linux linux-firmware cryptsetup grub
+pacstrap -K /mnt base linux linux-firmware cryptsetup btrfs-progs grub
 ```
 
 Consider also installing:
@@ -146,17 +149,16 @@ arch-chroot /mnt
 
 ## 7. Initramfs Configuration (Encryption Hook)
 
-Edit `/etc/mkinitcpio.conf` and ensure the `sd-encrypt` hook appears before `filesystems`.
+Edit `/etc/mkinitcpio.conf`:
+- Replace `systemd` with `udev`
+- Remove `sd-vconsole`
+- Add `encrypt` after `block` and before `filesystems`
+- Ensure `keyboard` and `keymap` appear before `encrypt`
 
 Example:
 ```
-HOOKS=(base systemd autodetect microcode modconf kms keyboard keymap sd-vconsole block sd-encrypt filesystems fsck)
+HOOKS=(base udev autodetect microcode modconf kms keyboard keymap block encrypt filesystems fsck)
 ```
-
-Ensure that `sd-encrypt`:
-- is used if using `systemd`
-- appears after `keyboard`, `keymap`, and `block`
-- appears before `filesystems`
 
 Regenerate initramfs:
 ```bash
