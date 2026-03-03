@@ -27,16 +27,19 @@ This section assumes familiarity with the standard Arch installation flow.
 
 ## 2. Partition Layout
 
-Root is fully encrypted.
+The obligatory legacy BIOS boot partition is unencrypted.
 
-`/boot` remains unencrypted to allow GRUB to load the kernel and initramfs.
+`/boot` is unencrypted to allow GRUB to load the kernel and initramfs.
+
+Root is fully encrypted.
 
 **Target Layout**
 
 | Device    | Size        | Role                          |
 |-----------|-------------|-------------------------------|
-| /dev/sdX1 | 512M        | Unencrypted /boot (ext4)      |
-| /dev/sdX2 | *Remainder* | LUKS2 container -> Btrfs root |
+| /dev/sdX1 | 2M          | BIOS boot partition (ef02)
+| /dev/sdX2 | 512M        | Unencrypted /boot (ext4)      |
+| /dev/sdX3 | *Remainder* | LUKS2 container -> Btrfs root |
 
 No LVM layer is used.
 
@@ -54,17 +57,18 @@ gdisk /dev/sdX
 
 Input `?` to list available actions.
 
-Create the two partitions, using type codes for hygiene:
-- 1st partition: size 512M, type code `8300`
-- 2nd partition: remainder of disk, type code `8304`
+Create the partitions, using type codes to correctly identify the BIOS boot partition (for hygeine otherwise):
+- 1st partition: size 2M, type code `ef02`
+- 2nd partition: size 512M, type code `8300`
+- 3rd partition: remainder of disk, type code `8304`
 
 
 ## 4. Encrypt the Root Partition
 
-Format and open the encrypted container:
+Format, define the passphrase, and open the encrypted container:
 ```bash
-cryptsetup luksFormat /dev/sdX2
-cryptsetup open /dev/sdX2 cryptroot
+cryptsetup luksFormat /dev/sdX3
+cryptsetup open /dev/sdX3 cryptroot
 ```
 
 This creates `/dev/mapper/cryptroot`. All subsequent file system operations target this mapped device.
@@ -105,13 +109,9 @@ mount --mkdir -o noatime,compress=no,subvol=@var_tmp /dev/mapper/cryptroot /mnt/
 
 Format and mount `/boot`:
 ```bash
-mkfs.ext4 /dev/sdX1
-mount --mkdir /dev/sdX1 /mnt/boot
+mkfs.ext4 /dev/sdX2
+mount --mkdir /dev/sdX2 /mnt/boot
 ```
-
-This establishes a clean separation between:
-- Encrypted system state
-- Unencrypted bootloader
 
 
 ## 6. Base System Installation
@@ -129,8 +129,9 @@ Consider also installing:
 - a privilege escalation utility
 - `xdg-user-dirs` for user XDG home directory management
 - a console text editor
-- packages for accessing man and info pages
+- a font, e.g. you may be setting `terminus-font` for vconsole readability
 - `tlp` for laptop power management tools
+- packages for accessing man and info pages (`man-db man-pages texinfo`)
 
 Generate `fstab`:
 ```bash
@@ -162,14 +163,14 @@ This enables early userspace unlocking of the LUKS container during boot.
 
 ## 8. GRUB Configuration for Encrypted Root
 
-Retreive the UUID of the encrypted partition:
+Retreive the UUID of the encrypted root partition:
 ```bash
-blkid /dev/sdX2
+blkid /dev/sdX3
 ```
 
 Edit `/etc/default/grub` and add the cryptdevice paramater:
 ```
-GRUB_CMDLINE_LINUX="cryptdevice=UUID=<UUID-of-sdX2>:cryptroot root=/dev/mapper/cryptroot"
+GRUB_CMDLINE_LINUX="cryptdevice=UUID=<UUID-of-sdX3>:cryptroot root=/dev/mapper/cryptroot"
 ```
 
 Install GRUB (BIOS target):
