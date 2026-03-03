@@ -106,7 +106,7 @@ mount --mkdir -o noatime,compress=no,subvol=@var_tmp /dev/mapper/cryptroot /mnt/
 Format and mount `/boot`:
 ```bash
 mkfs.ext4 /dev/sdX1
-mount /dev/sdX1 /mnt/boot
+mount --mkdir /dev/sdX1 /mnt/boot
 ```
 
 This establishes a clean separation between:
