@@ -163,14 +163,21 @@ This enables early userspace unlocking of the LUKS container during boot.
 
 ## 8. GRUB Configuration for Encrypted Root
 
-Retreive the UUID of the encrypted root partition:
+Edit `/etc/default/grub`, informing GRUB on how to handle the encrypted root.
+
+To manually retreive the UUID of the encrypted root partition (not the PARTUUID):
 ```bash
 blkid /dev/sdX3
 ```
 
-Edit `/etc/default/grub` and add the cryptdevice paramater:
+Optionally append the correct UUID, commented, to the `/etc/default/grub` file in one line:
+```bash
+blkid -s UUID -o value /dev/sda3 | sed 's/^/# /' >> /mnt/etc/default/grub
 ```
-GRUB_CMDLINE_LINUX="cryptdevice=UUID=<UUID-of-sdX3>:cryptroot root=/dev/mapper/cryptroot"
+
+Edit `/etc/default/grub` and add the cryptdevice paramater (use copy and paste if you appended):
+```
+GRUB_CMDLINE_LINUX="cryptdevice=UUID=<recorded-UUID>:cryptroot root=/dev/mapper/cryptroot"
 ```
 
 Install GRUB (BIOS target):
