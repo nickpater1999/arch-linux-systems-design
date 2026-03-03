@@ -118,7 +118,7 @@ mount --mkdir /dev/sdX2 /mnt/boot
 
 Install essential packages:
 ```bash
-pacstrap -K /mnt base linux linux-firmware grub
+pacstrap -K /mnt base linux linux-firmware cryptsetup grub
 ```
 
 Consider also installing:
