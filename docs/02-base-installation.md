@@ -94,6 +94,8 @@ btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
 btrfs su cr /mnt/@root_snapshots
 btrfs su cr /mnt/@home_snapshots
+btrfs su cr /mnt/@root_backup_snapshots
+btrfs su cr /mnt/@home_backup_snapshots
 btrfs su cr /mnt/@var_cache
 btrfs su cr /mnt/@var_log
 btrfs su cr /mnt/@var_spool
@@ -108,10 +110,18 @@ mount -o noatime,compress=zstd,subvol=@ /dev/mapper/cryptroot /mnt
 mount --mkdir -o noatime,compress=zstd,subvol=@home /dev/mapper/cryptroot /mnt/home
 mount --mkdir -o noatime,compress=zstd,subvol=@root_snapshots /dev/mapper/cryptroot /mnt/.snapshots
 mount --mkdir -o noatime,compress=zstd,subvol=@home_snapshots /dev/mapper/cryptroot /mnt/home/.snapshots
+mount --mkdir -o noatime,compress=zstd,subvol=@root_backup_snapshots /dev/mapper/cryptroot /mnt/.root-backup-snapshots
+mount --mkdir -o noatime,compress=zstd,subvol=@home_backup_snapshots /dev/mapper/cryptroot /mnt/.home-backup-snapshots
 mount --mkdir -o noatime,compress=no,subvol=@var_cache /dev/mapper/cryptroot /mnt/var/cache
 mount --mkdir -o noatime,compress=no,subvol=@var_log /dev/mapper/cryptroot /mnt/var/log
 mount --mkdir -o noatime,compress=no,subvol=@var_spool /dev/mapper/cryptroot /mnt/var/spool
 mount --mkdir -o noatime,compress=no,subvol=@var_tmp /dev/mapper/cryptroot /mnt/var/tmp
+```
+
+You can arbitrarily create a subvolume to tell the @ or @home snapshot strategies to igonore that subvolume. For example:
+```bash
+btrfs su cr /mnt/@big_files_dont_snapshot_or_backup
+mount -o <mount options> /dev/mapper/cryptroot /mnt/path/to/directory
 ```
 
 Format and mount `/boot`:
