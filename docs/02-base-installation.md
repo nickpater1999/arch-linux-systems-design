@@ -118,12 +118,6 @@ mount --mkdir -o noatime,compress=no,subvol=@var_spool /dev/mapper/cryptroot /mn
 mount --mkdir -o noatime,compress=no,subvol=@var_tmp /dev/mapper/cryptroot /mnt/var/tmp
 ```
 
-You can arbitrarily create a subvolume to tell the @ or @home snapshot strategies to igonore that subvolume. For example:
-```bash
-btrfs su cr /mnt/@big_files_dont_snapshot_or_backup
-mount -o <mount options> /dev/mapper/cryptroot /mnt/path/to/directory
-```
-
 Format and mount `/boot`:
 ```bash
 mkfs.ext4 /dev/sdX2
