@@ -40,7 +40,7 @@ Root is fully encrypted.
 
 | Device    | Size        | Role                          |
 |-----------|-------------|-------------------------------|
-| /dev/sdX1 | 2M          | BIOS boot partition (ef02)
+| /dev/sdX1 | 2M          | BIOS boot partition (ef02)    |
 | /dev/sdX2 | 512M        | Unencrypted /boot (ext4)      |
 | /dev/sdX3 | *Remainder* | LUKS2 container -> Btrfs root |
 
@@ -62,10 +62,10 @@ Input `?` to list available actions.
 
 Create a fresh GPT.
 
-Create the partitions, using type codes to correctly identify the BIOS boot partition (for hygeine otherwise):
+Create the partitions, using type codes to correctly identify the BIOS boot partition (for hygiene otherwise):
 - 1st partition: size 2M, type code `ef02` (BIOS boot partition)
-- 2nd partition: size 512M, type code `8300` (Linux reserved)
-- 3rd partition: remainder of disk, type code `8300` (Linux x86-64 root)
+- 2nd partition: size 512M, type code `8300` (Linux filesystem)
+- 3rd partition: remainder of disk, type code `8300` (Linux filesystem)
 
 
 ## 4. Encrypt the Root Partition
@@ -79,7 +79,7 @@ cryptsetup open /dev/sdX3 cryptroot
 This creates `/dev/mapper/cryptroot`. All subsequent file system operations target this mapped device.
 
 
-## 5. Btrfs File System and Subvolume Layout
+## 5. Btrfs File System & Subvolume Layout
 
 Format the file system in the encrypted container as Btrfs:
 ```bash
